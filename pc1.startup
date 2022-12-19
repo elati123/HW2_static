@@ -1,4 +1,5 @@
 /etc/init.d/networking restart
 echo "200.0.1.5 s1" > /etc/hosts
+echo "200.0.2.1 s2" > /etc/hosts
 echo -e '\n\n\n' | ssh-keygen
 cp /root/.ssh/id_rsa.pub /shared

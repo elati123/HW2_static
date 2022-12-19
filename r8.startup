@@ -4,10 +4,22 @@ ip route add 100.0.0.2/31 via 200.0.2.0
 ip route add 200.0.1.0/24 via 200.0.2.0
 
 # Firewall - NAT
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-iptables -A FORWARD -i eth0 -m state --state NEW -j DROP
+# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+# iptables -A FORWARD -i eth0 -m state --state NEW -j DROP
 
 # Firewall
 iptables -P INPUT DROP
 # iptables -A OUTPUT -j ACCEPT
-iptables -A FORWARD -s 200.0.2.1/31 -j ACCEPT
+iptables -A FORWARD -s 200.0.2.0/31 -j ACCEPT
+
+# NAT
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+iptables -A FORWARD -i eth0 -m state --state NEW -j DROP
+
+# Enable forwarding of SSH connections on port 22
+# Here the insert command -I is used instead of -A since otherwise the connection would be dropped by the rule at line 4 (the order of the rules matters)
+iptables -I FORWARD -i eth0 -p tcp --dport 22 -j ACCEPT
+
+# Make incoming SSH connections to be redirected to "s2" node behind NAT on port 22
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 22 -j DNAT --to-destination 192.168.0.250:22
+
