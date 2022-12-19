@@ -1,3 +1,4 @@
 /etc/init.d/networking restart
 
 ip route add 100.0.0.2/31 via 200.0.0.6
+ip route add 200.0.2.0/31 via 200.0.0.5
